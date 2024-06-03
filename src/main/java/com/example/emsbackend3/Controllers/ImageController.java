@@ -20,6 +20,7 @@ public class ImageController {
     @Autowired
     private StorageService service;
 
+    // insert image controller
     @PostMapping
     public ResponseEntity<?> uploadImage(@RequestParam("image") MultipartFile file) throws IOException {
         String uploadImage = service.uploadImage(file);
@@ -27,6 +28,7 @@ public class ImageController {
                 .body(uploadImage);
     }
 
+    // get image controller
     @GetMapping("/{fileName}")
     public ResponseEntity<?> downloadImage(@PathVariable String fileName){
         byte[] imageData=service.downloadImage(fileName);
@@ -35,6 +37,29 @@ public class ImageController {
                 .body(imageData);
 
     }
+
+    // update image controller
+    @PutMapping("/update/{imageId}")
+    public ResponseEntity<String> updateImage(@PathVariable long imageId,@RequestParam("image") MultipartFile file) throws IOException{
+        try {
+            String response = service.updateImage(imageId, file);
+            return ResponseEntity.ok(response);
+        } catch (IOException e) {
+            return ResponseEntity.status(500).body("Failed to update image: " + e.getMessage());
+        }
+    }
+
+    // delete image controller
+    @DeleteMapping("/delete/{imageId}")
+    public ResponseEntity<String> deleteImage(@PathVariable long imageId){
+        String response = service.deleteImage(imageId);
+        if (response.contains("deleted successfully")) {
+            return ResponseEntity.ok(response);
+        } else {
+            return ResponseEntity.status(404).body(response);
+        }
+    }
+
 }
 
 //package com.example.emsbackend3.Controllers;
